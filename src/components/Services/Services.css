@@ -221,6 +221,7 @@
 @media (max-width: 640px) {
   .services__grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .service-card {
@@ -229,5 +230,42 @@
 
   .services__cta {
     padding: 30px 20px;
+    margin-top: 40px;
+  }
+
+  .services__cta p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .service-card {
+    padding: 20px 16px;
+  }
+
+  .service-card__icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .service-card__title {
+    font-size: 1.15rem;
+  }
+
+  .service-card__description {
+    font-size: 0.9rem;
+  }
+
+  .service-card__features li {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+  }
+
+  .services__cta {
+    padding: 24px 16px;
+  }
+
+  .services__cta p {
+    font-size: 0.95rem;
   }
 }

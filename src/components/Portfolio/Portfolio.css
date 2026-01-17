@@ -242,14 +242,64 @@
 @media (max-width: 640px) {
   .portfolio__grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .portfolio__filters {
     gap: 8px;
+    margin-bottom: 32px;
   }
 
   .portfolio__filter {
     padding: 8px 16px;
     font-size: 0.85rem;
+  }
+
+  .portfolio__content {
+    padding: 16px;
+  }
+
+  .portfolio__cta {
+    margin-top: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio__filters {
+    gap: 6px;
+  }
+
+  .portfolio__filter {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .portfolio__content {
+    padding: 14px 12px;
+  }
+
+  .portfolio__title {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+
+  .portfolio__description {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+
+  .portfolio__category {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    margin-bottom: 10px;
+  }
+
+  .portfolio__tag {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+
+  .portfolio__tags {
+    gap: 6px;
   }
 }

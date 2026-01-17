@@ -300,13 +300,36 @@
 }
 
 @media (max-width: 480px) {
+  .testimonial-card {
+    padding: 24px 16px;
+  }
+
+  .testimonial-card__content {
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+
   .testimonial-card__author {
     flex-direction: column;
     text-align: center;
+    gap: 12px;
+  }
+
+  .testimonial-card__avatar {
+    width: 48px;
+    height: 48px;
   }
 
   .testimonial-card__info {
     text-align: center;
+  }
+
+  .testimonial-card__name {
+    font-size: 0.95rem;
+  }
+
+  .testimonial-card__role {
+    font-size: 0.8rem;
   }
 
   .testimonials__controls {
@@ -316,5 +339,16 @@
   .testimonials__arrow {
     width: 40px;
     height: 40px;
+  }
+
+  .testimonials__logos-grid {
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .testimonials__logo {
+    font-size: 0.9rem;
+    padding: 12px 16px;
   }
 }

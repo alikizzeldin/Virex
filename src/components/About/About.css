@@ -447,3 +447,82 @@
     margin-top: 4px;
   }
 }
+
+@media (max-width: 480px) {
+  .about__wrapper {
+    gap: 40px;
+    margin-bottom: 50px;
+  }
+
+  .about__image {
+    max-width: 220px;
+  }
+
+  .about__image-main {
+    max-width: 160px;
+  }
+
+  .about__experience-badge {
+    padding: 16px;
+    max-width: 160px;
+  }
+
+  .about__experience-value {
+    font-size: 1.75rem;
+  }
+
+  .about__experience-text {
+    font-size: 0.8rem;
+  }
+
+  .about__title {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+
+  .about__description {
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
+
+  .about__highlights {
+    gap: 12px;
+    margin: 24px auto;
+  }
+
+  .about__highlight-check {
+    width: 20px;
+    height: 20px;
+    font-size: 0.65rem;
+  }
+
+  .about__highlight span {
+    font-size: 0.9rem;
+  }
+
+  .about__stats {
+    gap: 10px;
+  }
+
+  .about__stat {
+    padding: 16px 12px;
+    gap: 10px;
+  }
+
+  .about__stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .about__stat-value {
+    font-size: 1.5rem;
+  }
+
+  .about__stat-suffix {
+    font-size: 1.1rem;
+  }
+
+  .about__stat-label {
+    font-size: 0.7rem;
+  }
+}

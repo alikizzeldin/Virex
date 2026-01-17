@@ -433,6 +433,33 @@ section {
   .section-header {
     margin-bottom: 50px;
   }
+
+  .section-title {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+  }
+
+  .section-description {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --section-padding: 48px;
+  }
+
+  .container {
+    padding: 0 12px;
+  }
+
+  .section-header {
+    margin-bottom: 40px;
+  }
+
+  .section-label {
+    padding: 6px 14px;
+    font-size: 0.75rem;
+  }
 }
 
 @media (max-width: 480px) {
