@@ -1,0 +1,233 @@
+/* ============================================
+   Services Section Styles
+   ============================================ */
+
+.services {
+  position: relative;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.services__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* Services Grid */
+.services__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Service Card */
+.service-card {
+  position: relative;
+  padding: 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  transition: var(--transition-normal);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  border-color: transparent;
+}
+
+.service-card:hover::before {
+  opacity: 1;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  padding: 1px;
+  background: var(--gradient-primary);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: var(--transition-normal);
+  pointer-events: none;
+}
+
+/* Glow Effect */
+.service-card__glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: var(--transition-slow);
+  pointer-events: none;
+}
+
+.service-card--purple .service-card__glow {
+  background: radial-gradient(
+    ellipse at top left,
+    rgba(168, 85, 247, 0.1) 0%,
+    transparent 50%
+  );
+}
+
+.service-card--blue .service-card__glow {
+  background: radial-gradient(
+    ellipse at top left,
+    rgba(59, 130, 246, 0.1) 0%,
+    transparent 50%
+  );
+}
+
+.service-card--cyan .service-card__glow {
+  background: radial-gradient(
+    ellipse at top left,
+    rgba(6, 182, 212, 0.1) 0%,
+    transparent 50%
+  );
+}
+
+.service-card--green .service-card__glow {
+  background: radial-gradient(
+    ellipse at top left,
+    rgba(16, 185, 129, 0.1) 0%,
+    transparent 50%
+  );
+}
+
+.service-card:hover .service-card__glow {
+  opacity: 1;
+}
+
+/* Header */
+.service-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.service-card__icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: var(--transition-normal);
+}
+
+.service-card--purple .service-card__icon {
+  background: rgba(168, 85, 247, 0.1);
+  color: var(--color-purple);
+}
+
+.service-card--blue .service-card__icon {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--color-blue);
+}
+
+.service-card--cyan .service-card__icon {
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--color-cyan);
+}
+
+.service-card--green .service-card__icon {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-green);
+}
+
+.service-card__arrow {
+  color: var(--text-muted);
+  transition: var(--transition-normal);
+}
+
+.service-card:hover .service-card__arrow {
+  color: var(--text-primary);
+}
+
+/* Content */
+.service-card__title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.service-card__description {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Features List */
+.service-card__features {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.service-card__features li {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  transition: var(--transition-normal);
+}
+
+.service-card:hover .service-card__features li {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* CTA Section */
+.services__cta {
+  text-align: center;
+  margin-top: 60px;
+  padding: 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  position: relative;
+  z-index: 1;
+}
+
+.services__cta p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .services__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .services__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .service-card {
+    padding: 24px;
+  }
+
+  .services__cta {
+    padding: 30px 20px;
+  }
+}

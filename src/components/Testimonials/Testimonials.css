@@ -1,0 +1,320 @@
+/* ============================================
+   Testimonials Section Styles
+   ============================================ */
+
+.testimonials {
+  position: relative;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.testimonials__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* Slider Wrapper */
+.testimonials__slider-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Testimonial Card */
+.testimonial-card {
+  position: relative;
+  padding: 48px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  text-align: center;
+  overflow: hidden;
+}
+
+.testimonial-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-xl);
+  padding: 1px;
+  background: var(--gradient-primary);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Quote Icon */
+.testimonial-card__quote {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  opacity: 0.1;
+}
+
+.testimonial-card--purple .testimonial-card__quote {
+  color: var(--color-purple);
+}
+
+.testimonial-card--cyan .testimonial-card__quote {
+  color: var(--color-cyan);
+}
+
+.testimonial-card--green .testimonial-card__quote {
+  color: var(--color-green);
+}
+
+.testimonial-card--blue .testimonial-card__quote {
+  color: var(--color-blue);
+}
+
+/* Rating */
+.testimonial-card__rating {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 24px;
+  color: #fbbf24;
+}
+
+.testimonial-card__rating svg {
+  animation: starShine 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.3));
+}
+
+.testimonial-card__rating svg:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.testimonial-card__rating svg:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.testimonial-card__rating svg:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.testimonial-card__rating svg:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+.testimonial-card__rating svg:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+@keyframes starShine {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.3));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.6));
+    transform: scale(1.08);
+  }
+}
+
+/* Content */
+.testimonial-card__content {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  font-style: italic;
+}
+
+/* Author */
+.testimonial-card__author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.testimonial-card__avatar {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.testimonial-card--purple .testimonial-card__avatar {
+  background: rgba(168, 85, 247, 0.2);
+}
+
+.testimonial-card--cyan .testimonial-card__avatar {
+  background: rgba(6, 182, 212, 0.2);
+}
+
+.testimonial-card--green .testimonial-card__avatar {
+  background: rgba(16, 185, 129, 0.2);
+}
+
+.testimonial-card--blue .testimonial-card__avatar {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.testimonial-card__info {
+  text-align: left;
+}
+
+.testimonial-card__name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.testimonial-card__role {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Controls */
+.testimonials__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.testimonials__arrow {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.testimonials__arrow:hover {
+  border-color: var(--color-purple);
+  color: var(--text-primary);
+}
+
+.testimonials__dots {
+  display: flex;
+  gap: 8px;
+}
+
+.testimonials__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--glass-border);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.testimonials__dot:hover {
+  background: rgba(168, 85, 247, 0.5);
+}
+
+.testimonials__dot--active {
+  background: var(--gradient-primary);
+  width: 30px;
+  border-radius: 5px;
+}
+
+/* Logos Section */
+.testimonials__logos {
+  text-align: center;
+  margin-top: 80px;
+  position: relative;
+  z-index: 1;
+}
+
+.testimonials__logos p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.testimonials__logos-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.testimonials__logo {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  opacity: 0.5;
+  transition: var(--transition-normal);
+}
+
+.testimonials__logo:hover {
+  opacity: 1;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   Responsive Styles
+   ============================================ */
+
+@media (max-width: 768px) {
+  .testimonial-card {
+    padding: 32px 24px;
+  }
+
+  .testimonial-card__content {
+    font-size: 1rem;
+  }
+
+  .testimonial-card__quote {
+    top: 10px;
+    left: 15px;
+  }
+
+  .testimonial-card__quote svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .testimonials__logos-grid {
+    gap: 24px;
+  }
+
+  .testimonials__logo {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .testimonial-card__author {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .testimonial-card__info {
+    text-align: center;
+  }
+
+  .testimonials__controls {
+    gap: 16px;
+  }
+
+  .testimonials__arrow {
+    width: 40px;
+    height: 40px;
+  }
+}
