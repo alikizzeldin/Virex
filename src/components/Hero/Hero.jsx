@@ -24,6 +24,11 @@ const Hero = () => {
   const dragOffset = useRef({ x: 0, y: 0 });
   const cardPositions = useRef([]);
 
+  // Physics state for cards
+  const cardPhysics = useRef([]);
+  const animationFrameId = useRef(null);
+  const isPhysicsActive = useRef(false);
+
   const openVideo = () => {
     setIsVideoOpen(true);
     document.body.style.overflow = 'hidden';
@@ -216,6 +221,247 @@ const Hero = () => {
       ease: 'power2.out',
     });
   }, []);
+
+  // Initialize card physics
+  const initCardPhysics = useCallback(() => {
+    const wrapper = visualWrapperRef.current;
+    if (!wrapper) return;
+
+    cards.current.forEach((card, index) => {
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      const wrapperRect = wrapper.getBoundingClientRect();
+
+      cardPhysics.current[index] = {
+        x: rect.left - wrapperRect.left,
+        y: rect.top - wrapperRect.top,
+        vx: 0,
+        vy: 0,
+        width: rect.width,
+        height: rect.height,
+        originalX: rect.left - wrapperRect.left,
+        originalY: rect.top - wrapperRect.top,
+      };
+    });
+  }, []);
+
+  // Physics simulation loop
+  const runPhysics = useCallback(() => {
+    const wrapper = visualWrapperRef.current;
+    if (!wrapper) return;
+
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const friction = 0.985;
+    const bounceFactor = 0.6;
+    const returnForce = 0.008;
+    let stillMoving = false;
+
+    cards.current.forEach((card, index) => {
+      const physics = cardPhysics.current[index];
+      if (!card || !physics) return;
+
+      // Apply friction
+      physics.vx *= friction;
+      physics.vy *= friction;
+
+      // Apply return force to original position
+      const dx = physics.originalX - physics.x;
+      const dy = physics.originalY - physics.y;
+      physics.vx += dx * returnForce;
+      physics.vy += dy * returnForce;
+
+      // Update position
+      physics.x += physics.vx;
+      physics.y += physics.vy;
+
+      // For cards 1 and 2 (Branding and Marketing), only allow horizontal movement
+      // Card 0 is Web Design (top), Card 1 is Branding (bottom-left), Card 2 is Marketing (bottom-right)
+      if (index === 1 || index === 2) {
+        // Constrain vertical movement - keep close to original Y
+        const maxVerticalOffset = 30;
+        if (physics.y < physics.originalY - maxVerticalOffset) {
+          physics.y = physics.originalY - maxVerticalOffset;
+          physics.vy = Math.abs(physics.vy) * bounceFactor;
+        }
+        if (physics.y > physics.originalY + maxVerticalOffset) {
+          physics.y = physics.originalY + maxVerticalOffset;
+          physics.vy = -Math.abs(physics.vy) * bounceFactor;
+        }
+      }
+
+      // Bounce off screen borders (using viewport)
+      const cardScreenX = wrapperRect.left + physics.x;
+      const cardScreenY = wrapperRect.top + physics.y;
+      const cardRight = cardScreenX + physics.width;
+      const cardBottom = cardScreenY + physics.height;
+
+      // Left border
+      if (cardScreenX < 0) {
+        physics.x = -wrapperRect.left;
+        physics.vx = Math.abs(physics.vx) * bounceFactor;
+        createBounceEffect(card);
+      }
+      // Right border
+      if (cardRight > window.innerWidth) {
+        physics.x = window.innerWidth - wrapperRect.left - physics.width;
+        physics.vx = -Math.abs(physics.vx) * bounceFactor;
+        createBounceEffect(card);
+      }
+      // Top border
+      if (cardScreenY < 0) {
+        physics.y = -wrapperRect.top;
+        physics.vy = Math.abs(physics.vy) * bounceFactor;
+        createBounceEffect(card);
+      }
+      // Bottom border
+      if (cardBottom > window.innerHeight) {
+        physics.y = window.innerHeight - wrapperRect.top - physics.height;
+        physics.vy = -Math.abs(physics.vy) * bounceFactor;
+        createBounceEffect(card);
+      }
+
+      // Apply transform
+      gsap.set(card, {
+        left: physics.x,
+        top: physics.y,
+      });
+
+      // Check if still moving significantly
+      if (Math.abs(physics.vx) > 0.5 || Math.abs(physics.vy) > 0.5 ||
+          Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+        stillMoving = true;
+      }
+    });
+
+    if (stillMoving) {
+      animationFrameId.current = requestAnimationFrame(runPhysics);
+    } else {
+      isPhysicsActive.current = false;
+      // Snap cards back smoothly
+      cards.current.forEach((card, index) => {
+        const physics = cardPhysics.current[index];
+        if (!card || !physics) return;
+        gsap.to(card, {
+          left: physics.originalX,
+          top: physics.originalY,
+          duration: 0.5,
+          ease: 'elastic.out(1, 0.5)',
+        });
+        physics.x = physics.originalX;
+        physics.y = physics.originalY;
+      });
+    }
+  }, []);
+
+  // Create bounce visual effect
+  const createBounceEffect = (card) => {
+    gsap.to(card, {
+      scale: 1.2,
+      duration: 0.1,
+      ease: 'power2.out',
+      onComplete: () => {
+        gsap.to(card, {
+          scale: 1,
+          duration: 0.3,
+          ease: 'elastic.out(1, 0.5)',
+        });
+      },
+    });
+  };
+
+  // Wave push effect when clicking center circle
+  const handleCenterClick = useCallback((e) => {
+    e.stopPropagation();
+
+    const center = centerLogoRef.current;
+    if (!center) return;
+
+    // Initialize physics if not done
+    initCardPhysics();
+
+    const centerRect = center.getBoundingClientRect();
+    const centerX = centerRect.left + centerRect.width / 2;
+    const centerY = centerRect.top + centerRect.height / 2;
+
+    // Visual wave effect on center
+    gsap.to(center, {
+      scale: 0.8,
+      duration: 0.1,
+      ease: 'power2.in',
+      onComplete: () => {
+        gsap.to(center, {
+          scale: 1.2,
+          duration: 0.15,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.to(center, {
+              scale: 1,
+              duration: 0.4,
+              ease: 'elastic.out(1, 0.5)',
+            });
+          },
+        });
+      },
+    });
+
+    // Create expanding ring effect
+    const ring = document.createElement('div');
+    ring.className = 'hero__wave-ring';
+    center.appendChild(ring);
+    gsap.fromTo(ring,
+      { scale: 0, opacity: 1 },
+      {
+        scale: 6,
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power2.out',
+        onComplete: () => ring.remove(),
+      }
+    );
+
+    // Push cards away from center with moderate force
+    const pushForce = 35;
+
+    cards.current.forEach((card, index) => {
+      if (!card) return;
+      const physics = cardPhysics.current[index];
+      if (!physics) return;
+
+      const cardRect = card.getBoundingClientRect();
+      const cardCenterX = cardRect.left + cardRect.width / 2;
+      const cardCenterY = cardRect.top + cardRect.height / 2;
+
+      // Calculate direction from center to card
+      const dx = cardCenterX - centerX;
+      const dy = cardCenterY - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+
+      // Normalize and apply force (closer cards get pushed harder)
+      const forceMult = Math.max(1, 200 / distance);
+      physics.vx += (dx / distance) * pushForce * forceMult;
+      physics.vy += (dy / distance) * pushForce * forceMult;
+
+      // Add some rotation for visual effect
+      gsap.to(card, {
+        rotation: `+=${(Math.random() - 0.5) * 60}`,
+        duration: 0.3,
+        ease: 'power2.out',
+        onComplete: () => {
+          gsap.to(card, {
+            rotation: 0,
+            duration: 1,
+            ease: 'elastic.out(1, 0.3)',
+          });
+        },
+      });
+    });
+
+    // Start physics loop if not already running
+    if (!isPhysicsActive.current) {
+      isPhysicsActive.current = true;
+      animationFrameId.current = requestAnimationFrame(runPhysics);
+    }
+  }, [initCardPhysics, runPhysics]);
 
   useEffect(() => {
     // Add global mouse event listeners for drag
@@ -549,6 +795,8 @@ const Hero = () => {
               ref={centerLogoRef}
               onMouseMove={handleCenterMouseMove}
               onMouseLeave={handleCenterMouseLeave}
+              onClick={handleCenterClick}
+              onTouchEnd={handleCenterClick}
             >
               <img src={logo} alt="Virex" className="hero__logo-main" />
               <div className="hero__center-ring hero__center-ring--1"></div>
