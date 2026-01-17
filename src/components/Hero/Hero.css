@@ -252,6 +252,7 @@
     transform: scale(1);
     opacity: 1;
   }
+
   100% {
     transform: scale(1.5);
     opacity: 0;
@@ -289,12 +290,10 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    transparent 0%,
-    rgba(168, 85, 247, 0.1) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(135deg,
+      transparent 0%,
+      rgba(168, 85, 247, 0.1) 50%,
+      transparent 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -311,13 +310,11 @@
 .hero__card-glow {
   position: absolute;
   inset: -2px;
-  background: linear-gradient(
-    45deg,
-    rgba(168, 85, 247, 0.4),
-    rgba(59, 130, 246, 0.4),
-    rgba(6, 182, 212, 0.4),
-    rgba(16, 185, 129, 0.4)
-  );
+  background: linear-gradient(45deg,
+      rgba(168, 85, 247, 0.4),
+      rgba(59, 130, 246, 0.4),
+      rgba(6, 182, 212, 0.4),
+      rgba(16, 185, 129, 0.4));
   border-radius: inherit;
   opacity: 0;
   z-index: -1;
@@ -334,6 +331,7 @@
   0% {
     filter: blur(8px) hue-rotate(0deg);
   }
+
   100% {
     filter: blur(8px) hue-rotate(360deg);
   }
@@ -406,12 +404,10 @@
 .hero__visual-wrapper::after {
   content: '';
   position: absolute;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(168, 85, 247, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(168, 85, 247, 0.2),
+      transparent);
   pointer-events: none;
 }
 
@@ -434,9 +430,12 @@
 }
 
 @keyframes lineGlow {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.3;
   }
+
   50% {
     opacity: 0.8;
   }
@@ -476,10 +475,13 @@
 }
 
 @keyframes scroll-wheel {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
+
   50% {
     opacity: 0.5;
     transform: translateX(-50%) translateY(8px);
@@ -615,6 +617,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -636,7 +639,7 @@
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
-              0 0 50px rgba(168, 85, 247, 0.2);
+    0 0 50px rgba(168, 85, 247, 0.2);
   animation: scaleIn 0.4s ease-out;
 }
 
@@ -645,6 +648,7 @@
     opacity: 0;
     transform: scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -678,7 +682,8 @@
 .video-modal__wrapper {
   position: relative;
   width: 100%;
-  padding-top: 177.78%; /* 9:16 reel aspect ratio */
+  padding-top: 177.78%;
+  /* 9:16 reel aspect ratio */
   background: #000;
   max-height: 85vh;
 }
