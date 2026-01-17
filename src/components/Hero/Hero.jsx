@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { ArrowRight, Play, Sparkles, X } from 'lucide-react';
 import logo from '../../assets/Virex_logo.png';
@@ -13,9 +13,16 @@ const Hero = () => {
   const buttonsRef = useRef(null);
   const statsRef = useRef(null);
   const visualRef = useRef(null);
+  const visualWrapperRef = useRef(null);
+  const centerLogoRef = useRef(null);
   const orbs = useRef([]);
+  const cards = useRef([]);
   const videoRef = useRef(null);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [activeCard, setActiveCard] = useState(null);
+  const dragOffset = useRef({ x: 0, y: 0 });
+  const cardPositions = useRef([]);
 
   const openVideo = () => {
     setIsVideoOpen(true);
@@ -30,6 +37,196 @@ const Hero = () => {
       videoRef.current.currentTime = 0;
     }
   };
+
+  // Magnetic effect for center logo
+  const handleCenterMouseMove = useCallback((e) => {
+    if (!centerLogoRef.current) return;
+    const rect = centerLogoRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const deltaX = (e.clientX - centerX) * 0.15;
+    const deltaY = (e.clientY - centerY) * 0.15;
+
+    gsap.to(centerLogoRef.current, {
+      x: deltaX,
+      y: deltaY,
+      rotateY: deltaX * 0.3,
+      rotateX: -deltaY * 0.3,
+      duration: 0.4,
+      ease: 'power2.out',
+    });
+  }, []);
+
+  const handleCenterMouseLeave = useCallback(() => {
+    if (!centerLogoRef.current) return;
+    gsap.to(centerLogoRef.current, {
+      x: 0,
+      y: 0,
+      rotateY: 0,
+      rotateX: 0,
+      duration: 0.6,
+      ease: 'elastic.out(1, 0.5)',
+    });
+  }, []);
+
+  // Card drag handlers
+  const handleCardMouseDown = useCallback((e, index) => {
+    e.preventDefault();
+    const card = cards.current[index];
+    if (!card) return;
+
+    const rect = card.getBoundingClientRect();
+    dragOffset.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+
+    // Store original position
+    if (!cardPositions.current[index]) {
+      cardPositions.current[index] = {
+        x: card.offsetLeft,
+        y: card.offsetTop,
+      };
+    }
+
+    setIsDragging(true);
+    setActiveCard(index);
+
+    // Lift card effect
+    gsap.to(card, {
+      scale: 1.1,
+      zIndex: 100,
+      boxShadow: '0 20px 40px rgba(168, 85, 247, 0.4), 0 0 30px rgba(168, 85, 247, 0.2)',
+      duration: 0.2,
+    });
+  }, []);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!isDragging || activeCard === null) return;
+    const card = cards.current[activeCard];
+    if (!card) return;
+
+    const wrapper = visualWrapperRef.current;
+    const wrapperRect = wrapper.getBoundingClientRect();
+
+    const newX = e.clientX - wrapperRect.left - dragOffset.current.x;
+    const newY = e.clientY - wrapperRect.top - dragOffset.current.y;
+
+    gsap.to(card, {
+      left: newX,
+      top: newY,
+      duration: 0.1,
+    });
+  }, [isDragging, activeCard]);
+
+  const handleMouseUp = useCallback(() => {
+    if (!isDragging || activeCard === null) return;
+    const card = cards.current[activeCard];
+    if (!card) return;
+
+    // Snap back animation with bounce
+    gsap.to(card, {
+      scale: 1,
+      zIndex: 1,
+      boxShadow: 'none',
+      duration: 0.5,
+      ease: 'elastic.out(1, 0.5)',
+    });
+
+    setIsDragging(false);
+    setActiveCard(null);
+  }, [isDragging, activeCard]);
+
+  // Card hover effects
+  const handleCardMouseEnter = useCallback((index) => {
+    if (isDragging) return;
+    const card = cards.current[index];
+    if (!card) return;
+
+    gsap.to(card, {
+      scale: 1.08,
+      y: -10,
+      boxShadow: '0 15px 35px rgba(168, 85, 247, 0.3), 0 0 20px rgba(168, 85, 247, 0.15)',
+      duration: 0.3,
+      ease: 'power2.out',
+    });
+
+    // Glow pulse on icon
+    const icon = card.querySelector('.hero__visual-icon');
+    if (icon) {
+      gsap.to(icon, {
+        scale: 1.15,
+        boxShadow: '0 0 25px rgba(168, 85, 247, 0.6)',
+        duration: 0.3,
+      });
+    }
+  }, [isDragging]);
+
+  const handleCardMouseLeave = useCallback((index) => {
+    if (isDragging && activeCard === index) return;
+    const card = cards.current[index];
+    if (!card) return;
+
+    gsap.to(card, {
+      scale: 1,
+      y: 0,
+      boxShadow: 'none',
+      duration: 0.4,
+      ease: 'power2.out',
+    });
+
+    const icon = card.querySelector('.hero__visual-icon');
+    if (icon) {
+      gsap.to(icon, {
+        scale: 1,
+        boxShadow: 'none',
+        duration: 0.3,
+      });
+    }
+  }, [isDragging, activeCard]);
+
+  // 3D tilt effect on cards
+  const handleCardMouseMove = useCallback((e, index) => {
+    if (isDragging) return;
+    const card = cards.current[index];
+    if (!card) return;
+
+    const rect = card.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const rotateX = (e.clientY - centerY) * -0.15;
+    const rotateY = (e.clientX - centerX) * 0.15;
+
+    gsap.to(card, {
+      rotateX,
+      rotateY,
+      duration: 0.3,
+      ease: 'power2.out',
+    });
+  }, [isDragging]);
+
+  const handleCardTiltReset = useCallback((index) => {
+    const card = cards.current[index];
+    if (!card) return;
+
+    gsap.to(card, {
+      rotateX: 0,
+      rotateY: 0,
+      duration: 0.5,
+      ease: 'power2.out',
+    });
+  }, []);
+
+  useEffect(() => {
+    // Add global mouse event listeners for drag
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -107,13 +304,50 @@ const Hero = () => {
         '-=0.2'
       );
 
-      // Animate visual element
+      // Animate visual element with stagger for cards
       tl.fromTo(
         visualRef.current,
-        { opacity: 0, scale: 0.8, rotate: -10 },
-        { opacity: 1, scale: 1, rotate: 0, duration: 1, ease: 'power3.out' },
+        { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out' },
         '-=0.8'
       );
+
+      // Animate cards with stagger and rotation
+      tl.fromTo(
+        cards.current,
+        { opacity: 0, scale: 0, rotation: -180 },
+        {
+          opacity: 1,
+          scale: 1,
+          rotation: 0,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: 'back.out(1.7)',
+        },
+        '-=0.5'
+      );
+
+      // Center logo pulse animation
+      tl.fromTo(
+        centerLogoRef.current,
+        { opacity: 0, scale: 0 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.5,
+          ease: 'back.out(2)',
+        },
+        '-=0.3'
+      );
+
+      // Continuous pulse glow on center
+      gsap.to(centerLogoRef.current, {
+        boxShadow: '0 0 60px rgba(168, 85, 247, 0.6), 0 0 100px rgba(168, 85, 247, 0.3)',
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+      });
 
       // Floating animation for orbs
       orbs.current.forEach((orb, index) => {
@@ -128,8 +362,22 @@ const Hero = () => {
         });
       });
 
+      // Orbit animation for cards (subtle)
+      cards.current.forEach((card, index) => {
+        if (!card) return;
+        const angle = (index * 120) * (Math.PI / 180);
+        gsap.to(card, {
+          y: `+=${Math.sin(angle) * 5}`,
+          x: `+=${Math.cos(angle) * 5}`,
+          duration: 3 + index,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
+      });
+
       // Parallax effect on mouse move
-      const handleMouseMove = (e) => {
+      const handleParallax = (e) => {
         const { clientX, clientY } = e;
         const x = (clientX / window.innerWidth - 0.5) * 30;
         const y = (clientY / window.innerHeight - 0.5) * 30;
@@ -151,10 +399,10 @@ const Hero = () => {
         });
       };
 
-      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mousemove', handleParallax);
 
       return () => {
-        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mousemove', handleParallax);
       };
     }, heroRef);
 
@@ -234,8 +482,15 @@ const Hero = () => {
         </div>
 
         <div className="hero__visual" ref={visualRef}>
-          <div className="hero__visual-wrapper">
-            <div className="hero__visual-card hero__visual-card--1">
+          <div className="hero__visual-wrapper" ref={visualWrapperRef}>
+            <div
+              className={`hero__visual-card hero__visual-card--1 ${isDragging && activeCard === 0 ? 'is-dragging' : ''}`}
+              ref={(el) => (cards.current[0] = el)}
+              onMouseDown={(e) => handleCardMouseDown(e, 0)}
+              onMouseEnter={() => handleCardMouseEnter(0)}
+              onMouseLeave={() => { handleCardMouseLeave(0); handleCardTiltReset(0); }}
+              onMouseMove={(e) => handleCardMouseMove(e, 0)}
+            >
               <div className="hero__visual-card-inner">
                 <div className="hero__visual-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -246,8 +501,16 @@ const Hero = () => {
                 </div>
                 <span>Web Design</span>
               </div>
+              <div className="hero__card-glow"></div>
             </div>
-            <div className="hero__visual-card hero__visual-card--2">
+            <div
+              className={`hero__visual-card hero__visual-card--2 ${isDragging && activeCard === 1 ? 'is-dragging' : ''}`}
+              ref={(el) => (cards.current[1] = el)}
+              onMouseDown={(e) => handleCardMouseDown(e, 1)}
+              onMouseEnter={() => handleCardMouseEnter(1)}
+              onMouseLeave={() => { handleCardMouseLeave(1); handleCardTiltReset(1); }}
+              onMouseMove={(e) => handleCardMouseMove(e, 1)}
+            >
               <div className="hero__visual-card-inner">
                 <div className="hero__visual-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -259,8 +522,16 @@ const Hero = () => {
                 </div>
                 <span>Branding</span>
               </div>
+              <div className="hero__card-glow"></div>
             </div>
-            <div className="hero__visual-card hero__visual-card--3">
+            <div
+              className={`hero__visual-card hero__visual-card--3 ${isDragging && activeCard === 2 ? 'is-dragging' : ''}`}
+              ref={(el) => (cards.current[2] = el)}
+              onMouseDown={(e) => handleCardMouseDown(e, 2)}
+              onMouseEnter={() => handleCardMouseEnter(2)}
+              onMouseLeave={() => { handleCardMouseLeave(2); handleCardTiltReset(2); }}
+              onMouseMove={(e) => handleCardMouseMove(e, 2)}
+            >
               <div className="hero__visual-card-inner">
                 <div className="hero__visual-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -271,9 +542,18 @@ const Hero = () => {
                 </div>
                 <span>Marketing</span>
               </div>
+              <div className="hero__card-glow"></div>
             </div>
-            <div className="hero__visual-center">
+            <div
+              className="hero__visual-center"
+              ref={centerLogoRef}
+              onMouseMove={handleCenterMouseMove}
+              onMouseLeave={handleCenterMouseLeave}
+            >
               <img src={logo} alt="Virex" className="hero__logo-main" />
+              <div className="hero__center-ring hero__center-ring--1"></div>
+              <div className="hero__center-ring hero__center-ring--2"></div>
+              <div className="hero__center-ring hero__center-ring--3"></div>
             </div>
           </div>
         </div>
